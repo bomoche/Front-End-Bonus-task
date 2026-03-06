@@ -3,17 +3,18 @@ import { testAPI } from "../services/api";
 
 export default function Form() {
   const [email, setEmail] = useState("");
-  const [url, setUrl] = useState("");
-  const [response, setResponse] = useState(null);
+  const [word, setWord] = useState("");
+  const [response, setResponse] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!email.trim() || !url.trim()) return;
+    if (!word.trim()) return alert("Please enter a word to sort.");
 
     setLoading(true);
-    const result = await testAPI(email, url);
+    setResponse(null);
+
+    const result = await testAPI(word); 
     setResponse(result);
     setLoading(false);
   };
@@ -21,7 +22,6 @@ export default function Form() {
   return (
     <>
       <form className="form" onSubmit={handleSubmit}>
-
         <div className="field">
           <label className="field-label">Email address</label>
           <input
@@ -30,39 +30,34 @@ export default function Form() {
             placeholder="you@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
           />
         </div>
 
         <div className="field">
-          <label className="field-label">API Endpoint</label>
+          <label className="field-label">Word to sort</label>
           <input
             className="field-input"
-            type="url"
-            placeholder="https://your-api.com/webhook"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            type="text"
+            placeholder="Enter a word, e.g., hello"
+            value={word}
+            onChange={(e) => setWord(e.target.value)}
             required
           />
         </div>
 
         <button className="submit-btn" type="submit" disabled={loading}>
-          {loading ? "Validating..." : "Run Validation"}
+          {loading ? "Sorting..." : "Sort Word"}
         </button>
-
       </form>
 
       {response && (
         <div className="response">
-          <div className="response-head">
-            Validation Result
-          </div>
-
+          <div className="response-head">Response</div>
           <div className="response-body">
             {Object.entries(response).map(([key, value]) => (
               <div className="response-row" key={key}>
                 <span className="response-key">{key}</span>
-                <span className="response-val">{String(value)}</span>
+                <span className="response-val">{Array.isArray(value) ? value.join(", ") : String(value)}</span>
               </div>
             ))}
           </div>

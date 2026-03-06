@@ -1,15 +1,15 @@
-const VALIDATOR_URL =
-  "https://yhxzjyykdsfkdrmdxgho.supabase.co/functions/v1/application-task";
+export const BACKEND_URL = "https://one-eleven-developer-task-backend-1.onrender.com/webhook";
 
-export async function testAPI(email: string, apiUrl: string) {
+export async function testAPI(word: string) {
+  if (!word.trim()) return { error: "Please enter a word to sort." };
+
   try {
-    const requestUrl = `${VALIDATOR_URL}?url=${encodeURIComponent(apiUrl)}&email=${encodeURIComponent(email)}`;
-
-    const response = await fetch(requestUrl);
-
-    const data = await response.json();
-
-    return data;
+    const response = await fetch(BACKEND_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: word }), 
+    });
+    return await response.json();
   } catch (error) {
     return { error: (error as Error).message };
   }
